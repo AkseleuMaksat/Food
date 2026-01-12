@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<div layout:fragment="akseleuFragment">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold mb-0" style="color:#D84315">
+            🍽 Food List
+        </h3>
+
+        <a th:href="@{/add-food}"
+           class="btn text-white fw-semibold"
+           style="background-color:#D84315">
+            + Add Food
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+
+                <thead style="background-color:#FFE0B2">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Calories</th>
+                    <th>Amount</th>
+                    <th>Price</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="f : ${foods}">
+                    <td th:text="${f.id}"></td>
+
+                    <td class="fw-semibold" style="color:#3E2723"
+                        th:text="${f.name}"></td>
+
+                    <td th:text="${f.calories} + ' Cal'"></td>
+                    <td th:text="${f.amounts}"></td>
+                    <td th:text="${f.price} + ' ₸'"></td>
+
+                    <td class="text-center">
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <a th:href="@{'/update-food/' + ${f.id}}"
+                               class="btn btn-sm btn-outline-dark">
+                                ✏ Edit
+                            </a>
+
+                            <form th:action="@{'/delete-food/' + ${f.id}}"
+                                  method="post"
+                                  onsubmit="return confirm('Delete this food?');">
+                                <button class="btn btn-sm btn-outline-danger">
+                                    🗑 Delete
+                                </button>
+                            </form>
+
+                        </div>
+                    </td>
+                </tr>
+
+                <tr th:if="${#lists.isEmpty(foods)}">
+                    <td colspan="6"
+                        class="text-center py-4 text-muted">
+                        No foods yet. Click “Add Food”.
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+
+</div>
+</html>

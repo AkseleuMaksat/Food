@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<div layout:fragment="akseleuFragment">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card shadow border-0 rounded-4 bg-white">
+                <div class="card-body p-4">
+
+                    <h4 class="text-center fw-bold mb-4"
+                        style="color:#D84315">
+                        🍽 Add New Food
+                    </h4>
+
+                    <form th:action="@{/add-food}" method="post">
+
+                        <!-- NAME -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Name</label>
+                            <input class="form-control"
+                                   name="name"
+                                   placeholder="e.g. Burger"
+                                   required>
+                        </div>
+
+                        <!-- CALORIES / AMOUNT -->
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Calories</label>
+                                <input class="form-control"
+                                       type="number" min="0"
+                                       name="calories"
+                                       placeholder="250"
+                                       required>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Amount</label>
+                                <input class="form-control"
+                                       type="number" min="0"
+                                       name="amounts"
+                                       placeholder="1"
+                                       required>
+                            </div>
+                        </div>
+
+                        <!-- PRICE -->
+                        <div class="mb-3 mt-3">
+                            <label class="form-label fw-semibold">Price (₸)</label>
+                            <input class="form-control"
+                                   type="number" min="0"
+                                   name="price"
+                                   placeholder="1200"
+                                   required>
+                        </div>
+
+                        <!-- MANUFACTURER -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Manufacturer</label>
+                            <select class="form-select" name="manufacturer" required>
+                                <option value="" disabled selected>
+                                    Select Manufacturer
+                                </option>
+                                <option th:each="m : ${manufacturers}"
+                                        th:value="${m.id}"
+                                        th:text="${m.name + ' / ' + m.code}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- INGREDIENTS -->
+                        <div class="mb-4">
+
+                            <h5 class="fw-bold mb-3" style="color:#3E2723">
+                                Ingredients
+                            </h5>
+
+                            <div class="row">
+                                <div class="col-md-6"
+                                     th:each="i : ${ingredients}">
+
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="ingredientIds"
+                                               th:value="${i.id}"
+                                               th:id="'ing-' + ${i.id}">
+
+                                        <label class="form-check-label fw-semibold"
+                                               th:for="'ing-' + ${i.id}"
+                                               th:text="${i.name}">
+                                        </label>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <small class="text-muted">
+                                Select ingredients for this food
+                            </small>
+                        </div>
+
+                        <!-- hidden inputs -->
+                        <div id="ingredientInputs"></div>
+
+                        <!-- ACTIONS -->
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/}"
+                               class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+
+                            <button type="submit"
+                                    class="btn fw-semibold text-white"
+                                    style="background-color:#D84315">
+                                Add Food
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</html>

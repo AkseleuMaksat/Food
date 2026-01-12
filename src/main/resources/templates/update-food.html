@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+
+<div layout:fragment="akseleuFragment">
+
+    <div class="card shadow border-0 rounded-4 p-4 mb-5">
+
+        <h4 class="fw-bold mb-4 text-center"
+            style="color:#D84315">
+            ✏ Edit Food
+        </h4>
+
+        <form th:action="@{'/update/' + ${f.id}}" method="post">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Name</label>
+                    <input class="form-control"
+                           name="name"
+                           th:value="${f.name}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Calories</label>
+                    <input class="form-control"
+                           type="number" min="0"
+                           name="calories"
+                           th:value="${f.calories}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Amount</label>
+                    <input class="form-control"
+                           type="number" min="0"
+                           name="amounts"
+                           th:value="${f.amounts}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Price (₸)</label>
+                    <input class="form-control"
+                           type="number" min="0"
+                           name="price"
+                           th:value="${f.price}" required>
+                </div>
+
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold">Manufacturer</label>
+                    <select class="form-select" name="manufacturer">
+                        <option th:each="m : ${manufacturers}"
+                                th:value="${m.id}"
+                                th:text="${m.name}"
+                                th:selected="${m.id == f.manufacturer.id}">
+                        </option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end mt-4 gap-2">
+                <a th:href="@{/}"
+                   class="btn btn-outline-secondary">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="btn text-white fw-semibold"
+                        style="background-color:#D84315">
+                    Save Changes
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Assigned Ingredients -->
+    <h5 class="fw-bold mb-3" style="color:#3E2723">
+        Assigned Ingredients
+    </h5>
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <div class="badge rounded-pill d-flex align-items-center gap-2"
+             style="background-color:#FF7043;color:white"
+             th:each="i : ${assignedIngredients}">
+
+            <span th:text="${i.name}"></span>
+
+            <form method="post" th:action="@{/unassign-ingredients}">
+                <input type="hidden" name="ingredient_id" th:value="${i.id}">
+                <input type="hidden" name="food_id" th:value="${f.id}">
+                <button class="btn btn-sm btn-light">×</button>
+            </form>
+        </div>
+
+        <span th:if="${#lists.isEmpty(assignedIngredients)}"
+              class="text-muted">
+            No ingredients assigned
+        </span>
+    </div>
+
+    <!-- Available Ingredients -->
+    <h5 class="fw-bold mb-3" style="color:#3E2723">
+        Available Ingredients
+    </h5>
+
+    <div class="d-flex flex-wrap gap-2">
+        <div class="badge rounded-pill d-flex align-items-center gap-2"
+             style="background-color:#FFE0B2;color:#3E2723"
+             th:each="i : ${availableIngredients}">
+
+            <span th:text="${i.name}"></span>
+
+            <form method="post" th:action="@{/assign-ingredients}">
+                <input type="hidden" name="ingredient_id" th:value="${i.id}">
+                <input type="hidden" name="food_id" th:value="${f.id}">
+                <button class="btn btn-sm btn-light">+</button>
+            </form>
+        </div>
+
+        <span th:if="${#lists.isEmpty(availableIngredients)}"
+              class="text-muted">
+            All ingredients assigned
+        </span>
+    </div>
+
+</div>
+</html>
