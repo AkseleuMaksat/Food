@@ -42,21 +42,9 @@
                     <a class="nav-link text-white" th:href="@{/add-ingredients}">Ingredients</a>
                 </li>
             </ul>
-
-            <form class="d-flex" method="get" th:action="@{/}">
-                <input class="form-control form-control-sm me-2"
-                       type="search"
-                       name="search"
-                       placeholder="Search food...">
-                <button class="btn btn-warning btn-sm fw-semibold" type="submit">
-                    Search
-                </button>
-            </form>
         </div>
     </div>
 </nav>
-
-<body style="background-color:#FFF8F1;">
 
 <div class="container my-4">
     <div layout:fragment="akseleuFragment"></div>
@@ -70,6 +58,5 @@
         </div>
     </div>
 </footer>
-
 </body>
 </html>
