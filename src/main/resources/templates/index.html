@@ -33,7 +33,7 @@
                 <option th:each="m : ${manufacturers}"
                         th:value="${m.id}"
                         th:text="${m.name + ' / ' + m.code}"
-                        th:selected="${manufacturer == m.id}">
+                        th:selected="${param.manufacturer == m.id}">
                 </option>
             </select>
             <label>Manufacturer</label>
@@ -46,7 +46,7 @@
                 <option th:each="i : ${ingredients}"
                         th:value="${i.id}"
                         th:text="${i.name}"
-                        th:selected="${ingredient == i.id}">
+                        th:selected="${param.ingredient == i.id}">
                 </option>
             </select>
             <label>Category</label>

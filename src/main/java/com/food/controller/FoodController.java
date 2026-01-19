@@ -1,12 +1,12 @@
-package com.food.akseleu.controller;
+package com.food.controller;
 
-import com.food.akseleu.model.Foods;
-import com.food.akseleu.model.Ingredients;
-import com.food.akseleu.model.Manufacturer;
-import com.food.akseleu.repository.FoodRepository;
-import com.food.akseleu.repository.IngredientsRepository;
-import com.food.akseleu.repository.ManufacturerRepository;
-import com.food.akseleu.specification.FoodSpecification;
+import com.food.model.Foods;
+import com.food.model.Ingredients;
+import com.food.model.Manufacturer;
+import com.food.repository.FoodRepository;
+import com.food.repository.IngredientsRepository;
+import com.food.repository.ManufacturerRepository;
+import com.food.specification.FoodSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;

@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.food'
 version = '0.0.1-SNAPSHOT'
-description = 'BitlabSpringBoot'
+description = 'BitlabFood'
 
 java {
     toolchain {

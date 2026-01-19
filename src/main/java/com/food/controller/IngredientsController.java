@@ -1,7 +1,7 @@
-package com.food.akseleu.controller;
+package com.food.controller;
 
-import com.food.akseleu.model.Ingredients;
-import com.food.akseleu.repository.IngredientsRepository;
+import com.food.model.Ingredients;
+import com.food.repository.IngredientsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

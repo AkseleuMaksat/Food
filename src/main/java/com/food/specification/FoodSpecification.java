@@ -1,7 +1,7 @@
-package com.food.akseleu.specification;
+package com.food.specification;
 
-import com.food.akseleu.model.Foods;
-import com.food.akseleu.model.Ingredients;
+import com.food.model.Foods;
+import com.food.model.Ingredients;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;

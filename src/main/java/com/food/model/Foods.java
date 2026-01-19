@@ -1,4 +1,4 @@
-package com.food.akseleu.model;
+package com.food.model;
 
 import jakarta.persistence.*;
 import lombok.*;

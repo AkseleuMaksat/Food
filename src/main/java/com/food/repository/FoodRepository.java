@@ -1,6 +1,6 @@
-package com.food.akseleu.repository;
+package com.food.repository;
 
-import com.food.akseleu.model.Foods;
+import com.food.model.Foods;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
