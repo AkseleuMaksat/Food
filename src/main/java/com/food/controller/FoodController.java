@@ -8,7 +8,9 @@ import com.food.repository.IngredientsRepository;
 import com.food.repository.ManufacturerRepository;
 import com.food.specification.FoodSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,19 +37,27 @@ public class FoodController {
                         @RequestParam(name = "calories", required = false) Integer calories,
                         @RequestParam(name = "price", required = false) Integer price,
                         @RequestParam(name = "manufacturer", required = false) Long manufacturer,
-                        @RequestParam(name = "ingredients", required = false)  Long ingredients,
-                        @RequestParam(name = "page", required = false, defaultValue = "0")  Integer pageValue,
-                        @RequestParam(name = "size", required = false, defaultValue = "5")  Integer sizeValue) {
+                        @RequestParam(name = "ingredients", required = false) Long ingredients,
+                        @RequestParam(name = "page", defaultValue = "0") Integer page,
+                        @RequestParam(name = "size", defaultValue = "5") Integer size,
+                        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                        @RequestParam(name = "sortOrder", defaultValue = "ASC") String sortOrder) {
+        Sort sort = Sort.by("DESC".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
+        PageRequest pageRequest = PageRequest.of(page, size, sort);
+        Specification<Foods> specification = FoodSpecification.queryFood(name, calories, price, manufacturer, ingredients);
+        Page<Foods> foodsPage = repository.findAll(specification, pageRequest);
 
-        PageRequest request = PageRequest.of(pageValue, sizeValue);
+        model.addAttribute("foods", foodsPage);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", foodsPage.getTotalPages());
+        model.addAttribute("size", size);
 
-        Specification<Foods> specification = FoodSpecification.queryFood(name, calories, price,manufacturer,ingredients);
-        model.addAttribute("foods", repository.findAll(specification));
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+
         model.addAttribute("manufacturers", manufacturerRepository.findAll());
         model.addAttribute("ingredients", ingredientsRepository.findAll());
-        model.addAttribute("name", name);
-        model.addAttribute("calories", calories);
-        model.addAttribute("price", price);
+
         model.addAttribute("manufacturer", manufacturer);
         model.addAttribute("ingredient", ingredients);
         return "index";
