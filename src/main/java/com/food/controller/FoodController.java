@@ -2,10 +2,9 @@ package com.food.controller;
 
 import com.food.model.Foods;
 import com.food.model.Ingredients;
-import com.food.model.Manufacturer;
-import com.food.repository.FoodRepository;
-import com.food.repository.IngredientsRepository;
-import com.food.repository.ManufacturerRepository;
+import com.food.service.FoodService;
+import com.food.service.IngredientsService;
+import com.food.service.ManufacturerService;
 import com.food.specification.FoodSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,9 +26,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FoodController {
 
-    private final FoodRepository repository;
-    private final IngredientsRepository ingredientsRepository;
-    private final ManufacturerRepository manufacturerRepository;
+    //    private final FoodRepository repository;
+//    private final IngredientsRepository ingredientsRepository;
+//    private final ManufacturerRepository manufacturerRepository;
+    private final ManufacturerService manufacturerService;
+    private final IngredientsService ingredientsService;
+    private final FoodService foodService;
 
     @GetMapping("/")
     public String index(Model model,
@@ -45,7 +47,7 @@ public class FoodController {
         Sort sort = Sort.by("DESC".equalsIgnoreCase(sortOrder) ? Sort.Direction.DESC : Sort.Direction.ASC, sortBy);
         PageRequest pageRequest = PageRequest.of(page, size, sort);
         Specification<Foods> specification = FoodSpecification.queryFood(name, calories, price, manufacturer, ingredients);
-        Page<Foods> foodsPage = repository.findAll(specification, pageRequest);
+        Page<Foods> foodsPage = foodService.findAll(specification, pageRequest);
 
         model.addAttribute("foods", foodsPage);
         model.addAttribute("currentPage", page);
@@ -55,8 +57,8 @@ public class FoodController {
         model.addAttribute("sortBy", sortBy);
         model.addAttribute("sortOrder", sortOrder);
 
-        model.addAttribute("manufacturers", manufacturerRepository.findAll());
-        model.addAttribute("ingredients", ingredientsRepository.findAll());
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        model.addAttribute("ingredients", ingredientsService.findAll());
 
         model.addAttribute("manufacturer", manufacturer);
         model.addAttribute("ingredient", ingredients);
@@ -65,8 +67,8 @@ public class FoodController {
 
     @GetMapping("/add-food")
     public String addFood(Model model) {
-        model.addAttribute("manufacturers", manufacturerRepository.findAll());
-        model.addAttribute("ingredients", ingredientsRepository.findAll());
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        model.addAttribute("ingredients", ingredientsService.findAll());
         return "add-food";
     }
 
@@ -75,42 +77,28 @@ public class FoodController {
                            @RequestParam(value = "ingredientIds", required = false) List<Long> ingredientIds,
                            @RequestParam("manufacturer") Long manufacturerId
     ) {
-        Manufacturer manufacturer = manufacturerRepository.findById(manufacturerId).orElseThrow(() -> new RuntimeException("Manufacturer not found"));
-        foods.setManufacturer(manufacturer);
-
-        if (ingredientIds != null && !ingredientIds.isEmpty()) {
-            List<Ingredients> ingredients = ingredientsRepository.findAllById(ingredientIds);
-            foods.setIngredients(ingredients);
-        }
-        repository.save(foods);
+        foodService.createFood(foods, manufacturerId, ingredientIds);
         return "redirect:/";
     }
 
     @GetMapping("update-food/{id}")
     public String editFood(Model model, @PathVariable Long id) {
 
-        Optional<Foods> food = repository.findById(id);
+        Foods foods = foodService.getFoodById(id);
 
-        if (food.isPresent()) {
-            Foods foods = food.get();
-            List<Ingredients> assigned = foods.getIngredients();
-            List<Ingredients> all = ingredientsRepository.findAll();
+        List<Ingredients> assigned =
+                Optional.ofNullable(foods.getIngredients())
+                        .orElseGet(ArrayList::new);
 
-            if (assigned == null) {
-                assigned = new ArrayList<>();
-            }
+        List<Ingredients> available =
+                new ArrayList<>(ingredientsService.findAll());
+        available.removeAll(assigned);
 
-            List<Ingredients> available = new ArrayList<>(all);
-            available.removeAll(assigned);
-
-            model.addAttribute("f", foods);
-            model.addAttribute("assignedIngredients", assigned);
-            model.addAttribute("availableIngredients", available);
-            model.addAttribute("manufacturers", manufacturerRepository.findAll());
-
-            return "update-food";
-        }
-        return "error";
+        model.addAttribute("f", foods);
+        model.addAttribute("assignedIngredients", assigned);
+        model.addAttribute("availableIngredients", available);
+        model.addAttribute("manufacturers", manufacturerService.findAll());
+        return "update-food";
     }
 
     @PostMapping("/update/{id}")
@@ -121,64 +109,27 @@ public class FoodController {
                               @RequestParam(name = "price") Integer price,
                               @RequestParam("manufacturer") Long manufacturerId
     ) {
-        Foods food = repository.findById(id).orElseThrow();
-        Manufacturer manufacturer = manufacturerRepository.findById(manufacturerId).orElseThrow();
-        food.setName(name);
-        food.setCalories(calories);
-        food.setAmounts(amounts);
-        food.setPrice(price);
-        food.setManufacturer(manufacturer);
-        repository.save(food);
+        foodService.updateFood(id, name, calories, amounts, price, manufacturerId);
         return "redirect:/";
     }
 
     @PostMapping("/assign-ingredients")
     public String assignIngredients(@RequestParam("food_id") Long foodId,
                                     @RequestParam("ingredient_id") Long ingredientId) {
-
-        Foods food = repository.findById(foodId).orElseThrow();
-        Ingredients ingredient = ingredientsRepository.findById(ingredientId).orElseThrow();
-
-        List<Ingredients> ingredientsList = food.getIngredients();
-
-        if (ingredientsList == null) {
-            ingredientsList = new ArrayList<>();
-        }
-
-        if (!ingredientsList.contains(ingredient)) {
-            ingredientsList.add(ingredient);
-        }
-
-        food.setIngredients(ingredientsList);
-        repository.save(food);
-
+        foodService.assignIngredients(foodId, ingredientId);
         return "redirect:/update-food/" + foodId;
     }
 
     @PostMapping("/unassign-ingredients")
     public String unassignIngredients(@RequestParam("food_id") Long foodId,
                                       @RequestParam("ingredient_id") Long ingredientId) {
-
-        Foods food = repository.findById(foodId).orElse(null);
-        if (food != null) {
-            Ingredients ingredient = ingredientsRepository.findById(ingredientId).orElse(null);
-            if (ingredient != null) {
-                List<Ingredients> ingredientsList = food.getIngredients();
-                if (ingredientsList == null) {
-                    ingredientsList = new ArrayList<>();
-                }
-                ingredientsList.remove(ingredient);
-                food.setIngredients(ingredientsList);
-                repository.save(food);
-            }
-            return "redirect:/update-food/" + foodId;
-        }
-        return "redirect:/404";
+        foodService.unassignIngredient(foodId, ingredientId);
+        return "redirect:/update-food/" + foodId;
     }
 
     @PostMapping("/delete-food/{id}")
     public String deleteFoods(@PathVariable Long id) {
-        repository.deleteById(id);
+        foodService.deleteFoodById(id);
         return "redirect:/";
     }
 }
