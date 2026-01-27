@@ -26,9 +26,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FoodController {
 
-    //    private final FoodRepository repository;
-//    private final IngredientsRepository ingredientsRepository;
-//    private final ManufacturerRepository manufacturerRepository;
     private final ManufacturerService manufacturerService;
     private final IngredientsService ingredientsService;
     private final FoodService foodService;
