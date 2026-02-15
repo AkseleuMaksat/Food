@@ -1,6 +1,3 @@
---liquibase formatted sql
-
---changeset akseleu:3
 CREATE TABLE t_roles (
     id BIGSERIAL PRIMARY KEY,
     role VARCHAR(255) NOT NULL UNIQUE
@@ -23,6 +20,8 @@ CREATE TABLE t_users_roles (
 
 INSERT INTO t_roles (role) VALUES ('ROLE_USER'), ('ROLE_ADMIN'), ('ROLE_MODERATOR');
 
-INSERT INTO t_users (email, password, full_name) VALUES ('admin@gmail.com', 'qwerty', 'Admin');
+INSERT INTO t_users (email, password, full_name) VALUES ('admin@gmail.com', '$2a$10$LQWAhuaSMo7ESTHKz3F3ge4uFP3okVhQQXaAHeUw1eLK7b7XA4gfu', 'Admin');
+INSERT INTO t_users (email, password, full_name) VALUES ('moderator@gmail.com', '$2a$10$LQWAhuaSMo7ESTHKz3F3ge4uFP3okVhQQXaAHeUw1eLK7b7XA4gfu', 'Moderator User');
 
 INSERT INTO t_users_roles (user_id, role_id) VALUES (1, 2);
+INSERT INTO t_users_roles (user_id, role_id) VALUES ((SELECT id FROM t_users WHERE email = 'moderator@gmail.com'), (SELECT id FROM t_roles WHERE role = 'ROLE_MODERATOR'));
