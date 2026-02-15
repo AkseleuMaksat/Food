@@ -1,41 +1,36 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout/main}">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout/main}">
 
 <div layout:fragment="akseleuFragment">
 
-    <form method="get" th:action="@{/}" class="mb-4">
+    <form method="get" th:action="@{/}" class="mb-4" sec:authorize="isAuthenticated()">
 
         <!-- FILTERS -->
         <div class="row g-3 align-items-end">
 
             <div class="col-lg-2 col-md-4 form-floating">
-                <input class="form-control" name="name" placeholder="Name"
-                       th:value="${param.name}">
+                <input class="form-control" name="name" placeholder="Name" th:value="${param.name}">
                 <label>Name</label>
             </div>
 
             <div class="col-lg-2 col-md-4 form-floating">
                 <input type="number" class="form-control" name="calories" placeholder="Calories"
-                       th:value="${param.calories}">
+                    th:value="${param.calories}">
                 <label>Calories</label>
             </div>
 
             <div class="col-lg-2 col-md-4 form-floating">
                 <input type="number" class="form-control" name="price" placeholder="Max price"
-                       th:value="${param.price}">
+                    th:value="${param.price}">
                 <label>Max price</label>
             </div>
 
             <div class="col-lg-2 col-md-4 form-floating">
                 <select class="form-select" name="manufacturer">
                     <option value="">Any</option>
-                    <option th:each="m : ${manufacturers}"
-                            th:value="${m.id}"
-                            th:text="${m.name + ' / ' + m.code}"
-                            th:selected="${manufacturer == m.id}">
+                    <option th:each="m : ${manufacturers}" th:value="${m.id}" th:text="${m.name + ' / ' + m.code}"
+                        th:selected="${manufacturer == m.id}">
                     </option>
                 </select>
                 <label>Manufacturer</label>
@@ -44,10 +39,8 @@
             <div class="col-lg-2 col-md-4 form-floating">
                 <select class="form-select" name="ingredients">
                     <option value="">Any</option>
-                    <option th:each="i : ${ingredients}"
-                            th:value="${i.id}"
-                            th:text="${i.name}"
-                            th:selected="${ingredient == i.id}">
+                    <option th:each="i : ${ingredients}" th:value="${i.id}" th:text="${i.name}"
+                        th:selected="${ingredient == i.id}">
                     </option>
                 </select>
                 <label>Ingredients</label>
@@ -83,12 +76,11 @@
             </div>
 
             <div class="col-lg-2 col-md-4 form-floating">
-                <input type="number" min="1" class="form-control" name="size"
-                       th:value="${size}">
+                <input type="number" min="1" class="form-control" name="size" th:value="${size}">
                 <label>Page size</label>
             </div>
 
-            <input type="hidden" name="page" value="0"/>
+            <input type="hidden" name="page" value="0" />
         </div>
 
     </form>
@@ -99,9 +91,8 @@
             🍽 Food List
         </h3>
 
-        <a th:href="@{/add-food}"
-           class="btn text-white fw-semibold"
-           style="background-color:#D84315">
+        <a th:href="@{/add-food}" class="btn text-white fw-semibold" style="background-color:#D84315"
+            sec:authorize="hasAnyRole('ROLE_MODERATOR', 'ROLE_ADMIN')">
             + Add Food
         </a>
     </div>
@@ -111,53 +102,49 @@
             <table class="table table-hover align-middle mb-0">
 
                 <thead style="background-color:#FFE0B2">
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Calories</th>
-                    <th>Amount</th>
-                    <th>Price</th>
-                    <th class="text-center">Actions</th>
-                </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Calories</th>
+                        <th>Amount</th>
+                        <th>Price</th>
+                        <th class="text-center" sec:authorize="hasAnyRole('ROLE_MODERATOR', 'ROLE_ADMIN')">Actions</th>
+                    </tr>
                 </thead>
 
                 <tbody>
-                <tr th:each="f : ${foods.content}">
-                    <td th:text="${f.id}"></td>
+                    <tr th:each="f : ${foods.content}">
+                        <td th:text="${f.id}"></td>
 
-                    <td class="fw-semibold" style="color:#3E2723"
-                        th:text="${f.name}"></td>
+                        <td class="fw-semibold" style="color:#3E2723" th:text="${f.name}"></td>
 
-                    <td th:text="${f.calories} + ' Cal'"></td>
-                    <td th:text="${f.amounts}"></td>
-                    <td th:text="${f.price} + ' ₸'"></td>
+                        <td th:text="${f.calories} + ' Cal'"></td>
+                        <td th:text="${f.amounts}"></td>
+                        <td th:text="${f.price} + ' ₸'"></td>
 
-                    <td class="text-center">
-                        <div class="d-flex justify-content-center gap-2">
+                        <td class="text-center" sec:authorize="hasAnyRole('ROLE_MODERATOR', 'ROLE_ADMIN')">
+                            <div class="d-flex justify-content-center gap-2">
 
-                            <a th:href="@{'/update-food/' + ${f.id}}"
-                               class="btn btn-sm btn-outline-dark">
-                                ✏ Edit
-                            </a>
+                                <a th:href="@{'/update-food/' + ${f.id}}" class="btn btn-sm btn-outline-dark">
+                                    ✏ Edit
+                                </a>
 
-                            <form th:action="@{'/delete-food/' + ${f.id}}"
-                                  method="post"
-                                  onsubmit="return confirm('Delete this food?');">
-                                <button class="btn btn-sm btn-outline-danger">
-                                    🗑 Delete
-                                </button>
-                            </form>
+                                <form th:action="@{'/delete-food/' + ${f.id}}" method="post"
+                                    onsubmit="return confirm('Delete this food?');">
+                                    <button class="btn btn-sm btn-outline-danger">
+                                        🗑 Delete
+                                    </button>
+                                </form>
 
-                        </div>
-                    </td>
-                </tr>
+                            </div>
+                        </td>
+                    </tr>
 
-                <tr th:if="${#lists.isEmpty(foods)}">
-                    <td colspan="6"
-                        class="text-center py-4 text-muted">
-                        No foods yet. Click “Add Food”.
-                    </td>
-                </tr>
+                    <tr th:if="${#lists.isEmpty(foods)}">
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            No foods yet. Click “Add Food”.
+                        </td>
+                    </tr>
                 </tbody>
 
             </table>
@@ -167,8 +154,7 @@
 
                 <!-- Prev -->
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{/(page=${currentPage - 1},
+                    <a class="page-link" th:href="@{/(page=${currentPage - 1},
                            size=${size},
                            sortBy=${sortBy},
                            sortOrder=${sortOrder},
@@ -182,12 +168,9 @@
                 </li>
 
                 <!-- Pages -->
-                <li class="page-item"
-                    th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                     th:classappend="${i == currentPage} ? 'active'">
-                    <a class="page-link"
-                       th:text="${i + 1}"
-                       th:href="@{/(page=${i},
+                    <a class="page-link" th:text="${i + 1}" th:href="@{/(page=${i},
                            size=${size},
                            sortBy=${sortBy},
                            sortOrder=${sortOrder},
@@ -200,10 +183,8 @@
                 </li>
 
                 <!-- Next -->
-                <li class="page-item"
-                    th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{/(page=${currentPage + 1},
+                <li class="page-item" th:classappend="${currentPage + 1 == totalPages} ? 'disabled'">
+                    <a class="page-link" th:href="@{/(page=${currentPage + 1},
                            size=${size},
                            sortBy=${sortBy},
                            sortOrder=${sortOrder},
@@ -220,4 +201,5 @@
     </div>
 
 </div>
+
 </html>

@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/changeset/001-init.sql
+  - include:
+      file: db/changelog/changeset/002-data.sql
+  - include:
+      file: db/changelog/changeset/003-auth-schema.sql
+  - include:
+      file: db/changelog/changeset/004-add-moderator-role.sql

@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: food-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: foods
+      POSTGRES_USER: food_user
+      POSTGRES_PASSWORD: food_pass
+    ports:
+      - "5438:5432"
+    volumes:
+      - food_pg_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: food-appd
+    depends_on:
+      - postgres
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+
+volumes:
+  food_pg_data:
