@@ -18,41 +18,41 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-        @Bean
-        public UserService userService() {
-                return new UserServiceImpl();
-        }
+    @Bean
+    public UserService userService() {
+        return new UserServiceImpl();
+    }
 
-        @Bean
-        public PasswordEncoder passwordEncoder() {
-                return new BCryptPasswordEncoder();
-        }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-        @Bean
-        public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-                AuthenticationManagerBuilder authenticationManagerBuilder = http
-                                .getSharedObject(AuthenticationManagerBuilder.class);
-                authenticationManagerBuilder
-                                .userDetailsService(userService())
-                                .passwordEncoder(passwordEncoder());
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        AuthenticationManagerBuilder authenticationManagerBuilder = http
+                .getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder
+                .userDetailsService(userService())
+                .passwordEncoder(passwordEncoder());
 
-                http.authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/", "/register", "/login", "/css/**", "/js/**").permitAll()
-                                .requestMatchers("/add-food", "/update-food/**", "/delete-food/**")
-                                .hasAnyRole("MODERATOR", "ADMIN")
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .anyRequest().authenticated())
-                                .formLogin(form -> form
-                                                .loginPage("/login")
-                                                .loginProcessingUrl("/login")
-                                                .defaultSuccessUrl("/", true)
-                                                .failureUrl("/login?error")
-                                                .permitAll())
-                                .logout(logout -> logout
-                                                .logoutUrl("/logout")
-                                                .logoutSuccessUrl("/login?logout")
-                                                .permitAll())
-                                .csrf(AbstractHttpConfigurer::disable);
-                return http.build();
-        }
+        http.authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/register", "/login", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/add-food", "/update-food/**", "/delete-food/**")
+                        .hasAnyRole("MODERATOR", "ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/", true)
+                        .failureUrl("/login?error")
+                        .permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll())
+                .csrf(AbstractHttpConfigurer::disable);
+        return http.build();
+    }
 }

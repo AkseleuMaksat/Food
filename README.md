@@ -8,7 +8,7 @@ A robust and scalable Spring Boot application designed to manage food items, ing
 
 ## 🚀 Project Overview
 
-The **Bitlab Food Service** is a backend-focused application with a Thymeleaf frontend that allows users to browse food items, while administrators can manage the entire catalog. Use cases include:
+The **Akseleu Food Service** is a backend-focused application with a Thymeleaf frontend that allows users to browse food items, while administrators can manage the entire catalog. Use cases include:
 - **User Registration & Authentication**: Secure access using Spring Security.
 - **Food Catalog Management**: create, read, update, and delete food items.
 - **Ingredient Tracking**: Associate ingredients with food items.
@@ -82,7 +82,7 @@ The project follows a classic layered architecture to ensure separation of conce
     ./gradlew bootRun
     ```
 
-    The application will start at `http://localhost:8080`.
+    The application will start at `http://localhost:8083`.
 
 ### Testing
 
@@ -97,23 +97,9 @@ To generate the code coverage report:
 ```
 The report will be available at `build/reports/jacoco/test/html/index.html`.
 
----
-
-## 📸 Screenshots
-
-*(Place your screenshots here)*
-
-| Login Page | Food List |
-|:---:|:---:|
-| ![Login](placeholder-login.png) | ![List](placeholder-list.png) |
-
----
-
 ## 👨‍💻 Author
 
 **Akseleu Maksat**
 -   **GitHub**: [github.com/akseleumaksat](https://github.com/akseleumaksat)
 
 ---
-
-*This project is ready for review and deployment.*

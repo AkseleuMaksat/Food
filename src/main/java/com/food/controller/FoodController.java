@@ -11,14 +11,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
@@ -35,15 +35,15 @@ public class FoodController {
 
     @GetMapping("/")
     public String index(Model model,
-            @RequestParam(name = "name", required = false) String name,
-            @RequestParam(name = "calories", required = false) Integer calories,
-            @RequestParam(name = "price", required = false) Integer price,
-            @RequestParam(name = "manufacturer", required = false) Long manufacturer,
-            @RequestParam(name = "ingredients", required = false) Long ingredients,
-            @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size,
-            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = "ASC") String sortOrder) {
+                        @RequestParam(name = "name", required = false) String name,
+                        @RequestParam(name = "calories", required = false) Integer calories,
+                        @RequestParam(name = "price", required = false) Integer price,
+                        @RequestParam(name = "manufacturer", required = false) Long manufacturer,
+                        @RequestParam(name = "ingredients", required = false) Long ingredients,
+                        @RequestParam(name = "page", defaultValue = "0") Integer page,
+                        @RequestParam(name = "size", defaultValue = "5") Integer size,
+                        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+                        @RequestParam(name = "sortOrder", defaultValue = "ASC") String sortOrder) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
@@ -87,8 +87,8 @@ public class FoodController {
 
     @PostMapping("/add-food")
     public String addFoods(Foods foods,
-            @RequestParam(value = "ingredientIds", required = false) List<Long> ingredientIds,
-            @RequestParam("manufacturerId") Long manufacturerId) {
+                           @RequestParam(value = "ingredientIds", required = false) List<Long> ingredientIds,
+                           @RequestParam("manufacturerId") Long manufacturerId) {
         foodService.createFood(foods, manufacturerId, ingredientIds);
         return "redirect:/";
     }
@@ -113,25 +113,25 @@ public class FoodController {
 
     @PostMapping("/update/{id}")
     public String updateFoods(@PathVariable Long id,
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "calories") Integer calories,
-            @RequestParam(name = "amounts") Integer amounts,
-            @RequestParam(name = "price") Integer price,
-            @RequestParam("manufacturer") Long manufacturerId) {
+                              @RequestParam(name = "name") String name,
+                              @RequestParam(name = "calories") Integer calories,
+                              @RequestParam(name = "amounts") Integer amounts,
+                              @RequestParam(name = "price") Integer price,
+                              @RequestParam("manufacturer") Long manufacturerId) {
         foodService.updateFood(id, name, calories, amounts, price, manufacturerId);
         return "redirect:/";
     }
 
     @PostMapping("/assign-ingredients")
     public String assignIngredients(@RequestParam("food_id") Long foodId,
-            @RequestParam("ingredient_id") Long ingredientId) {
+                                    @RequestParam("ingredient_id") Long ingredientId) {
         foodService.assignIngredients(foodId, ingredientId);
         return "redirect:/update-food/" + foodId;
     }
 
     @PostMapping("/unassign-ingredients")
     public String unassignIngredients(@RequestParam("food_id") Long foodId,
-            @RequestParam("ingredient_id") Long ingredientId) {
+                                      @RequestParam("ingredient_id") Long ingredientId) {
         foodService.unassignIngredient(foodId, ingredientId);
         return "redirect:/update-food/" + foodId;
     }

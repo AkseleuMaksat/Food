@@ -1,10 +1,10 @@
 package com.food.controller;
 
 import com.food.model.Manufacturer;
-import org.springframework.ui.Model;
 import com.food.repository.ManufacturerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 

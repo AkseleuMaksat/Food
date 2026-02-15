@@ -52,7 +52,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     @Transactional
     public void updateFood(Long id, String name, Integer calories, Integer amounts, Integer price,
-            Long manufacturerId) {
+                           Long manufacturerId) {
         Foods food = getFoodById(id);
         food.setName(name);
         food.setCalories(calories);
