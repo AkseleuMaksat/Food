@@ -1,5 +1,6 @@
 package com.food.service;
 
+import com.food.exception.ResourceNotFoundException;
 import com.food.model.Foods;
 import com.food.model.Ingredients;
 import com.food.model.Manufacturer;
@@ -53,9 +54,9 @@ public class FoodServiceTest {
     public void getFoodById_FoodNotFound_ThrowsException() {
         when(foodRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> foodService.getFoodById(1L));
+        Exception exception = assertThrows(ResourceNotFoundException.class, () -> foodService.getFoodById(1L));
 
-        assertEquals("Еда не найдена", exception.getMessage());
+        assertEquals("Еда не найдена с id: 1", exception.getMessage());
         verify(foodRepository, times(1)).findById(1L);
     }
 

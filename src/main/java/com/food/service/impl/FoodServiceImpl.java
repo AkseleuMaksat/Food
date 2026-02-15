@@ -1,5 +1,6 @@
 package com.food.service.impl;
 
+import com.food.exception.ResourceNotFoundException;
 import com.food.model.Foods;
 import com.food.model.Ingredients;
 import com.food.repository.FoodRepository;
@@ -27,7 +28,7 @@ public class FoodServiceImpl implements FoodService {
 
     @Override
     public Foods getFoodById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new RuntimeException("Еда не найдена"));
+        return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Еда не найдена с id: " + id));
     }
 
     @Override
@@ -52,7 +53,7 @@ public class FoodServiceImpl implements FoodService {
     @Override
     @Transactional
     public void updateFood(Long id, String name, Integer calories, Integer amounts, Integer price,
-                           Long manufacturerId) {
+            Long manufacturerId) {
         Foods food = getFoodById(id);
         food.setName(name);
         food.setCalories(calories);
@@ -85,5 +86,16 @@ public class FoodServiceImpl implements FoodService {
         if (food.getIngredients() != null) {
             food.getIngredients().remove(ingredient);
         }
+    }
+
+    @Override
+    public List<Ingredients> getAvailableIngredients(Long foodId) {
+        Foods foods = getFoodById(foodId);
+        List<Ingredients> assigned = Optional.ofNullable(foods.getIngredients())
+                .orElseGet(ArrayList::new);
+        List<Ingredients> allIngredients = ingredientService.findAll();
+        List<Ingredients> available = new ArrayList<>(allIngredients);
+        available.removeAll(assigned);
+        return available;
     }
 }

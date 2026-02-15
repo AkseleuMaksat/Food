@@ -1,6 +1,7 @@
 package com.food.service;
 
 import com.food.model.Foods;
+import com.food.model.Ingredients;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -21,4 +22,6 @@ public interface FoodService {
     void assignIngredients(Long foodId, Long ingredientId);
 
     void unassignIngredient(Long foodId, Long ingredientId);
+
+    List<Ingredients> getAvailableIngredients(Long foodId);
 }

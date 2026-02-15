@@ -1,5 +1,9 @@
 package com.food.controller;
 
+import com.food.dto.FoodDto;
+import com.food.dto.IngredientsDto;
+import com.food.mapper.FoodMapper;
+import com.food.mapper.IngredientsMapper;
 import com.food.model.Foods;
 import com.food.model.Ingredients;
 import com.food.service.FoodService;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,18 +37,20 @@ public class FoodController {
     private final ManufacturerService manufacturerService;
     private final IngredientsService ingredientsService;
     private final FoodService foodService;
+    private final FoodMapper foodMapper;
+    private final IngredientsMapper ingredientsMapper;
 
     @GetMapping("/")
     public String index(Model model,
-                        @RequestParam(name = "name", required = false) String name,
-                        @RequestParam(name = "calories", required = false) Integer calories,
-                        @RequestParam(name = "price", required = false) Integer price,
-                        @RequestParam(name = "manufacturer", required = false) Long manufacturer,
-                        @RequestParam(name = "ingredients", required = false) Long ingredients,
-                        @RequestParam(name = "page", defaultValue = "0") Integer page,
-                        @RequestParam(name = "size", defaultValue = "5") Integer size,
-                        @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
-                        @RequestParam(name = "sortOrder", defaultValue = "ASC") String sortOrder) {
+            @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "calories", required = false) Integer calories,
+            @RequestParam(name = "price", required = false) Integer price,
+            @RequestParam(name = "manufacturer", required = false) Long manufacturer,
+            @RequestParam(name = "ingredients", required = false) Long ingredients,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size", defaultValue = "5") Integer size,
+            @RequestParam(name = "sortBy", defaultValue = "id") String sortBy,
+            @RequestParam(name = "sortOrder", defaultValue = "ASC") String sortOrder) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
@@ -61,8 +68,9 @@ public class FoodController {
         Specification<Foods> specification = FoodSpecification.queryFood(name, calories, price, manufacturer,
                 ingredients);
         Page<Foods> foodsPage = foodService.findAll(specification, pageRequest);
+        Page<FoodDto> foodDtoPage = foodsPage.map(foodMapper::toDto);
 
-        model.addAttribute("foods", foodsPage);
+        model.addAttribute("foods", foodDtoPage);
         model.addAttribute("currentPage", page);
         model.addAttribute("totalPages", foodsPage.getTotalPages());
         model.addAttribute("size", size);
@@ -87,8 +95,8 @@ public class FoodController {
 
     @PostMapping("/add-food")
     public String addFoods(Foods foods,
-                           @RequestParam(value = "ingredientIds", required = false) List<Long> ingredientIds,
-                           @RequestParam("manufacturerId") Long manufacturerId) {
+            @RequestParam(value = "ingredientIds", required = false) List<Long> ingredientIds,
+            @RequestParam("manufacturerId") Long manufacturerId) {
         foodService.createFood(foods, manufacturerId, ingredientIds);
         return "redirect:/";
     }
@@ -97,41 +105,44 @@ public class FoodController {
     public String editFood(Model model, @PathVariable Long id) {
 
         Foods foods = foodService.getFoodById(id);
+        FoodDto foodDto = foodMapper.toDto(foods);
 
-        List<Ingredients> assigned = Optional.ofNullable(foods.getIngredients())
+        List<IngredientsDto> assigned = Optional.ofNullable(foodDto.getIngredients())
                 .orElseGet(ArrayList::new);
 
-        List<Ingredients> available = new ArrayList<>(ingredientsService.findAll());
-        available.removeAll(assigned);
+        List<Ingredients> available = foodService.getAvailableIngredients(id);
+        List<IngredientsDto> availableDtos = available.stream()
+                .map(ingredientsMapper::toDto)
+                .collect(Collectors.toList());
 
-        model.addAttribute("f", foods);
+        model.addAttribute("f", foodDto);
         model.addAttribute("assignedIngredients", assigned);
-        model.addAttribute("availableIngredients", available);
+        model.addAttribute("availableIngredients", availableDtos);
         model.addAttribute("manufacturers", manufacturerService.findAll());
         return "update-food";
     }
 
     @PostMapping("/update/{id}")
     public String updateFoods(@PathVariable Long id,
-                              @RequestParam(name = "name") String name,
-                              @RequestParam(name = "calories") Integer calories,
-                              @RequestParam(name = "amounts") Integer amounts,
-                              @RequestParam(name = "price") Integer price,
-                              @RequestParam("manufacturer") Long manufacturerId) {
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "calories") Integer calories,
+            @RequestParam(name = "amounts") Integer amounts,
+            @RequestParam(name = "price") Integer price,
+            @RequestParam("manufacturer") Long manufacturerId) {
         foodService.updateFood(id, name, calories, amounts, price, manufacturerId);
         return "redirect:/";
     }
 
     @PostMapping("/assign-ingredients")
     public String assignIngredients(@RequestParam("food_id") Long foodId,
-                                    @RequestParam("ingredient_id") Long ingredientId) {
+            @RequestParam("ingredient_id") Long ingredientId) {
         foodService.assignIngredients(foodId, ingredientId);
         return "redirect:/update-food/" + foodId;
     }
 
     @PostMapping("/unassign-ingredients")
     public String unassignIngredients(@RequestParam("food_id") Long foodId,
-                                      @RequestParam("ingredient_id") Long ingredientId) {
+            @RequestParam("ingredient_id") Long ingredientId) {
         foodService.unassignIngredient(foodId, ingredientId);
         return "redirect:/update-food/" + foodId;
     }
