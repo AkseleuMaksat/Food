@@ -4,6 +4,7 @@ import com.food.model.Foods;
 import com.food.model.Ingredients;
 import com.food.model.Manufacturer;
 import com.food.repository.FoodRepository;
+import com.food.service.impl.FoodServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +19,6 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +34,7 @@ public class FoodServiceTest {
     private ManufacturerService manufacturerService;
 
     @InjectMocks
-    private FoodService foodService;
+    private FoodServiceImpl foodService;
 
     @Test
     public void getFoodById_FoodExists_ReturnsFood() {
@@ -53,9 +53,7 @@ public class FoodServiceTest {
     public void getFoodById_FoodNotFound_ThrowsException() {
         when(foodRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            foodService.getFoodById(1L);
-        });
+        Exception exception = assertThrows(RuntimeException.class, () -> foodService.getFoodById(1L));
 
         assertEquals("Еда не найдена", exception.getMessage());
         verify(foodRepository, times(1)).findById(1L);

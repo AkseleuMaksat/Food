@@ -1,12 +1,14 @@
 package com.food.config;
 
 import com.food.service.UserService;
+import com.food.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,7 +20,7 @@ public class SecurityConfig {
 
         @Bean
         public UserService userService() {
-                return new UserService();
+                return new UserServiceImpl();
         }
 
         @Bean
@@ -50,7 +52,7 @@ public class SecurityConfig {
                                                 .logoutUrl("/logout")
                                                 .logoutSuccessUrl("/login?logout")
                                                 .permitAll())
-                                .csrf(csrf -> csrf.disable());
+                                .csrf(AbstractHttpConfigurer::disable);
                 return http.build();
         }
 }

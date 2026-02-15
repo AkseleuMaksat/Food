@@ -4,7 +4,7 @@ import com.food.entity.Role;
 import com.food.entity.User;
 import com.food.repository.RoleRepository;
 import com.food.repository.UserRepository;
-
+import com.food.service.impl.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +32,7 @@ public class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     @Test
     public void loadUserByUsername_UserFound_ReturnsUserDetails() {
@@ -53,9 +53,7 @@ public class UserServiceTest {
     public void loadUserByUsername_UserNotFound_ThrowsException() {
         when(userRepository.findByEmail("unknown@test.com")).thenReturn(null);
 
-        assertThrows(UsernameNotFoundException.class, () -> {
-            userService.loadUserByUsername("unknown@test.com");
-        });
+        assertThrows(UsernameNotFoundException.class, () -> userService.loadUserByUsername("unknown@test.com"));
 
         verify(userRepository, times(1)).findByEmail("unknown@test.com");
     }
@@ -79,7 +77,7 @@ public class UserServiceTest {
         assertNotNull(createdUser);
         assertEquals("encodedPassword", createdUser.getPassword());
         assertEquals(1, createdUser.getRoles().size());
-        assertEquals("ROLE_USER", createdUser.getRoles().get(0).getRole());
+        assertEquals("ROLE_USER", createdUser.getRoles().getFirst().getRole());
 
         verify(userRepository, times(1)).findByEmail("new@test.com");
         verify(roleRepository, times(1)).findByRole("ROLE_USER");

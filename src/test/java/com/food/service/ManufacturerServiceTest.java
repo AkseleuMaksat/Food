@@ -2,6 +2,7 @@ package com.food.service;
 
 import com.food.model.Manufacturer;
 import com.food.repository.ManufacturerRepository;
+import com.food.service.impl.ManufacturerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +23,7 @@ public class ManufacturerServiceTest {
     private ManufacturerRepository manufacturerRepository;
 
     @InjectMocks
-    private ManufacturerService manufacturerService;
+    private ManufacturerServiceImpl manufacturerService;
 
     @Test
     public void findAll_ReturnsList() {
@@ -53,9 +54,7 @@ public class ManufacturerServiceTest {
     public void findById_ManufacturerNotFound_ThrowsException() {
         when(manufacturerRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> {
-            manufacturerService.findById(1L);
-        });
+        assertThrows(RuntimeException.class, () -> manufacturerService.findById(1L));
 
         verify(manufacturerRepository, times(1)).findById(1L);
     }

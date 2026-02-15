@@ -2,6 +2,7 @@ package com.food.service;
 
 import com.food.model.Ingredients;
 import com.food.repository.IngredientsRepository;
+import com.food.service.impl.IngredientsServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -22,7 +23,7 @@ public class IngredientsServiceTest {
     private IngredientsRepository ingredientsRepository;
 
     @InjectMocks
-    private IngredientsService ingredientsService;
+    private IngredientsServiceImpl ingredientsService;
 
     @Test
     public void findAll_ReturnsList() {
@@ -53,9 +54,7 @@ public class IngredientsServiceTest {
     public void findById_IngredientNotFound_ThrowsException() {
         when(ingredientsRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> {
-            ingredientsService.findById(1L);
-        });
+        assertThrows(RuntimeException.class, () -> ingredientsService.findById(1L));
 
         verify(ingredientsRepository, times(1)).findById(1L);
     }
