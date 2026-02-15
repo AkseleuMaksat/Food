@@ -97,6 +97,14 @@ To generate the code coverage report:
 ```
 The report will be available at `build/reports/jacoco/test/html/index.html`.
 
+### API Documentation
+
+Swagger UI is available at:
+`http://localhost:8083/swagger-ui/index.html`
+
+OpenAPI JSON is available at:
+`http://localhost:8083/v3/api-docs`
+
 ## 👨‍💻 Author
 
 **Akseleu Maksat**
