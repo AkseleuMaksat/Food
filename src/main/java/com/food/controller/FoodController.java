@@ -10,6 +10,7 @@ import com.food.service.FoodService;
 import com.food.service.IngredientsService;
 import com.food.service.ManufacturerService;
 import com.food.specification.FoodSpecification;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -94,9 +95,10 @@ public class FoodController {
     }
 
     @PostMapping("/add-food")
-    public String addFoods(Foods foods,
+    public String addFoods(@Valid FoodDto foodDto,
             @RequestParam(value = "ingredientIds", required = false) List<Long> ingredientIds,
             @RequestParam("manufacturerId") Long manufacturerId) {
+        Foods foods = foodMapper.toEntity(foodDto);
         foodService.createFood(foods, manufacturerId, ingredientIds);
         return "redirect:/";
     }
@@ -124,12 +126,10 @@ public class FoodController {
 
     @PostMapping("/update/{id}")
     public String updateFoods(@PathVariable Long id,
-            @RequestParam(name = "name") String name,
-            @RequestParam(name = "calories") Integer calories,
-            @RequestParam(name = "amounts") Integer amounts,
-            @RequestParam(name = "price") Integer price,
+            @Valid FoodDto foodDto,
             @RequestParam("manufacturer") Long manufacturerId) {
-        foodService.updateFood(id, name, calories, amounts, price, manufacturerId);
+        foodService.updateFood(id, foodDto.getName(), foodDto.getCalories(), foodDto.getAmounts(), foodDto.getPrice(),
+                manufacturerId);
         return "redirect:/";
     }
 

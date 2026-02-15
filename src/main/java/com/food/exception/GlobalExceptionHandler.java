@@ -1,28 +1,24 @@
 package com.food.exception;
 
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public String handleResourceNotFoundException(ResourceNotFoundException ex, Model model) {
-        model.addAttribute("errorMessage", ex.getMessage());
-        return "error/404";
+        model.addAttribute("message", ex.getMessage());
+        return "404";
     }
 
-    @ExceptionHandler(Exception.class)
-    public String handleGlobalException(Exception ex, Model model) {
-        model.addAttribute("errorMessage", "An unexpected error occurred: " + ex.getMessage());
-        return "error/error";
-    }
-
-    @ExceptionHandler(NoHandlerFoundException.class)
-    public String handleNoHandlerFoundException(NoHandlerFoundException ex, Model model) {
-        model.addAttribute("errorMessage", "Page not found");
-        return "error/404";
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public String handleValidationExceptions(MethodArgumentNotValidException ex, Model model) {
+        BindingResult result = ex.getBindingResult();
+        model.addAttribute("errors", result.getAllErrors());
+        return "error";
     }
 }
