@@ -37,7 +37,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/register", "/login", "/css/**", "/js/**", "/swagger-ui/**",
-                                "/v3/api-docs/**")
+                                "/v3/api-docs/**", "/v3/api-docs", "/swagger-ui.html")
                         .permitAll()
                         .requestMatchers("/add-food", "/update-food/**", "/delete-food/**")
                         .hasAnyRole("MODERATOR", "ADMIN")
