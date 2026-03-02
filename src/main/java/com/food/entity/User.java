@@ -64,4 +64,10 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public boolean hasRole(String roleName) {
+        if (roles == null)
+            return false;
+        return roles.stream().anyMatch(r -> r.getRole().equals(roleName));
+    }
 }

@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequiredArgsConstructor
 public class FoodController {
-
     private final ManufacturerService manufacturerService;
     private final IngredientsService ingredientsService;
     private final FoodService foodService;

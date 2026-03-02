@@ -23,13 +23,11 @@ public class FoodControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void shouldAddFoodSuccessfully() throws Exception {
-        // Given
         Manufacturer manufacturer = new Manufacturer();
         manufacturer.setName("Test Manufacturer");
         manufacturer.setCode("TM");
         manufacturer = manufacturerRepository.save(manufacturer);
 
-        // When & Then
         mockMvc.perform(post("/add-food")
                         .param("name", "Test Food")
                         .param("calories", "100")
@@ -44,15 +42,11 @@ public class FoodControllerIntegrationTest extends BaseIntegrationTest {
     @Test
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void shouldFailValidationWhenNameIsEmpty() throws Exception {
-        // Given
         Manufacturer manufacturer = new Manufacturer();
         manufacturer.setName("Test Manufacturer");
         manufacturer.setCode("TM");
         manufacturer = manufacturerRepository.save(manufacturer);
 
-        // When & Then (Validation Error Handling - depends on GlobalExceptionHandler
-        // implementation)
-        // Since GlobalExceptionHandler returns "error" view, we expect that.
         mockMvc.perform(post("/add-food")
                         .param("name", "") // Invalid: Empty name
                         .param("calories", "100")
