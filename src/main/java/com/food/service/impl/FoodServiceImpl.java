@@ -60,6 +60,7 @@ public class FoodServiceImpl implements FoodService {
         food.setAmounts(amounts);
         food.setPrice(price);
         food.setManufacturer(manufacturerService.findById(manufacturerId));
+        repository.save(food);
     }
 
     @Override

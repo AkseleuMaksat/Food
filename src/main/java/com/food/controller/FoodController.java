@@ -123,12 +123,19 @@ public class FoodController {
         return "update-food";
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/update-food/{id}")
     public String updateFoods(@PathVariable Long id,
             @Valid FoodDto foodDto,
-            @RequestParam("manufacturer") Long manufacturerId) {
-        foodService.updateFood(id, foodDto.getName(), foodDto.getCalories(), foodDto.getAmounts(), foodDto.getPrice(),
+            @RequestParam("manufacturerId") Long manufacturerId) {
+
+        foodService.updateFood(
+                id,
+                foodDto.getName(),
+                foodDto.getCalories(),
+                foodDto.getAmounts(),
+                foodDto.getPrice(),
                 manufacturerId);
+
         return "redirect:/";
     }
 
